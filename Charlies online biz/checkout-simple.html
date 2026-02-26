@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: sans-serif; background: #111; color: #fff; padding: 40px; }
+        .container { max-width: 500px; margin: 0 auto; background: #1a1a1a; padding: 40px; border-radius: 8px; }
+        h1 { color: #ff3333; margin-bottom: 20px; }
+        .price { font-size: 3em; color: #ff3333; margin: 20px 0; }
+        input, button { width: 100%; padding: 15px; margin: 10px 0; font-size: 1em; }
+        button { background: #ff3333; color: white; border: none; cursor: pointer; }
+        button:disabled { background: #444; }
+        .error { color: #ff6666; margin-top: 10px; }
+        #card-container { background: #222; padding: 20px; margin: 20px 0; min-height: 80px; }
+    </style>
+    <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 SANDBOX TEST</h1>
+        <div id="product-name">OpenClaw Guide</div>
+        <div class="price" id="price">$39</div>
+        <input type="email" id="email" placeholder="your@email.com" required>
+        <div id="card-container">Loading Square...</div>
+        <button id="pay-btn" disabled>Loading...</button>
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        const url = new URLSearchParams(window.location.search);
+        const product = url.get('product') || 'quickstart';
+        const price = product === 'quickstart' ? '$39' : '$97';
+        const amount = product === 'quickstart' ? 3900 : 9700;
+        
+        document.getElementById('product-name').textContent = 
+            product === 'quickstart' ? 'Quick Start Guide' : 'Full System';
+        document.getElementById('price').textContent = price;
+
+        // Sandbox credentials from backend
+        let appId, locationId;
+
+        async function init() {
+            try {
+                // Get config from backend
+                const res = await fetch('/api/square-config');
+                const config = await res.json();
+                appId = config.applicationId;
+                locationId = config.locationId;
+                
+                console.log('Config loaded:', config);
+
+                if (!window.Square) {
+                    throw new Error('Square SDK not loaded');
+                }
+
+                const payments = window.Square.payments(appId, locationId);
+                const card = await payments.card();
+                await card.attach('#card-container');
+
+                const btn = document.getElementById('pay-btn');
+                btn.disabled = false;
+                btn.textContent = 'Pay ' + price;
+
+                btn.addEventListener('click', async () => {
+                    const email = document.getElementById('email').value;
+                    if (!email.includes('@')) {
+                        document.getElementById('error').textContent = 'Invalid email';
+                        return;
+                    }
+
+                    btn.disabled = true;
+                    btn.textContent = 'Processing...';
+
+                    try {
+                        const token = await card.tokenize();
+                        if (token.status !== 'OK') {
+                            throw new Error('Card tokenization failed');
+                        }
+
+                        const response = await fetch('/api/payment', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({
+                                sourceId: token.token,
+                                productKey: product,
+                                email: email
+                            })
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            window.location.href = `success.html?product=${product}&email=${encodeURIComponent(email)}`;
+                        } else {
+                            document.getElementById('error').textContent = result.error || 'Payment failed';
+                            btn.disabled = false;
+                            btn.textContent = 'Pay ' + price;
+                        }
+                    } catch (e) {
+                        document.getElementById('error').textContent = e.message;
+                        btn.disabled = false;
+                        btn.textContent = 'Pay ' + price;
+                    }
+                });
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('error').textContent = 'Error: ' + e.message;
+                document.getElementById('card-container').textContent = 'Failed to load payment form';
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -105,6 +105,58 @@
             margin-top: 20px;
         }
         
+        .bonus-box {
+            background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.05) 100%);
+            border: 1px solid #ffd700;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .bonus-badge {
+            background: #ffd700;
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .bonus-title {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: #ffd700;
+        }
+        
+        .bonus-desc {
+            font-size: 0.9em;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+        
+        .bonus-button {
+            display: inline-block;
+            background: transparent;
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9em;
+            border: 1px solid #ffd700;
+            cursor: pointer;
+        }
+        
+        .bonus-button:hover {
+            background: #ffd700;
+            color: #000;
+        }
+        
         .back-link {
             margin-top: 30px;
         }
@@ -150,6 +202,16 @@
         
         <a href="#" class="download-button" id="download-button">Download Your Guide</a>
         
+        <!-- BONUS: Only shows for Full System -->
+        <div id="bonus-section" style="display: none;">
+            <div class="bonus-box">
+                <span class="bonus-badge">FREE BONUS</span>
+                <div class="bonus-title">The $100 AI Business Blueprint</div>
+                <div class="bonus-desc">The original meta-guide that started it all. Learn how to package and sell AI automation services. ($100 value)</div>
+                <a href="BONUS-100-AI-Business-Blueprint.html" class="bonus-button" download>Download Bonus</a>
+            </div>
+        </div>
+        
         <div class="note">
             <strong>Important:</strong> A receipt has been sent to your email. <br>
             If the download doesn't start automatically, check your spam folder.
@@ -173,11 +235,11 @@
         const PRODUCTS = {
             quickstart: {
                 name: 'OpenClaw Quick Start Guide',
-                file: 'QUICK-START-COMPLETE.html'
+                pdfFile: 'OpenClaw-Quick-Start-Guide.pdf'
             },
             fullsystem: {
                 name: 'OpenClaw Full System',
-                file: 'FULL-SYSTEM-COMPLETE.html'
+                pdfFile: 'OpenClaw-Full-System-Guide.pdf'
             }
         };
         
@@ -186,9 +248,15 @@
         document.getElementById('product-name').textContent = product.name;
         document.getElementById('product-email').textContent = `Delivered to: ${email}`;
         
-        // Set download link
-        document.getElementById('download-button').href = product.file;
-        document.getElementById('download-button').download = product.file;
+        // Set download link to PDF endpoint
+        const downloadUrl = `/download/${productKey}?email=${encodeURIComponent(email)}`;
+        document.getElementById('download-button').href = downloadUrl;
+        document.getElementById('download-button').textContent = 'Download PDF Guide';
+        
+        // Show bonus for Full System buyers
+        if (productKey === 'fullsystem') {
+            document.getElementById('bonus-section').style.display = 'block';
+        }
         
         // In production, you'd verify the payment on the server first
         // This is a simplified version for demonstration

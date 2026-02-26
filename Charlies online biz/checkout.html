@@ -214,8 +214,8 @@
             }
         }
     </style>
-    <!-- Square Web Payments SDK -->
-    <script src="https://web.squarecdn.com/v1/square.js"></script>
+    <!-- Square Web Payments SDK (Sandbox) -->
+    <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
 </head>
 <body>
     <div class="header">
@@ -297,9 +297,23 @@
         document.getElementById('product-desc').textContent = product.description;
         document.getElementById('pay-button').textContent = `Pay ${product.price}`;
         
-        // Initialize Square payments
-        const appId = 'sq0idp-uaH6xBBYIATp53gSXc2L-g';
-        const locationId = 'LQGDP9KSZ29V9';
+        // Fetch Square config from backend
+        let appId, locationId;
+        
+        async function loadSquareConfig() {
+            try {
+                const response = await fetch('/api/square-config');
+                const config = await response.json();
+                appId = config.applicationId;
+                locationId = config.locationId;
+                console.log('Square config loaded:', config.environment, 'mode');
+            } catch (error) {
+                console.error('Failed to load Square config:', error);
+                document.getElementById('error-message').textContent = 
+                    'Payment system failed to load. Please refresh.';
+                document.getElementById('error-message').style.display = 'block';
+            }
+        }
         
         async function initializeCard(payments) {
             console.log('Initializing card form...');
@@ -313,18 +327,29 @@
         async function createPayment(token) {
             const email = document.getElementById('email').value;
             
-            // In production, this would call your backend
-            // For now, we'll simulate success and redirect
-            console.log('Payment token:', token);
-            console.log('Product:', productKey);
-            console.log('Email:', email);
-            
-            // Simulate processing
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve({ success: true });
-                }, 1500);
-            });
+            // Call backend API
+            try {
+                const response = await fetch('/api/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sourceId: token,
+                        productKey: productKey,
+                        email: email
+                    })
+                });
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Payment API error:', error);
+                return {
+                    success: false,
+                    error: 'Payment processing failed. Please try again.'
+                };
+            }
         }
         
         document.addEventListener('DOMContentLoaded', async function () {
@@ -333,6 +358,13 @@
                     'Payment system failed to load. Please refresh.';
                 document.getElementById('error-message').style.display = 'block';
                 return;
+            }
+            
+            // Load Square config from backend first
+            await loadSquareConfig();
+            
+            if (!appId || !locationId) {
+                return; // Error already shown by loadSquareConfig
             }
             
             let payments;
