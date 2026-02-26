@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Charlie Bot's OpenClaw Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #ff3333;
+            --dark: #0a0a0a;
+            --light: #ffffff;
+            --gray: #888888;
+            --green: #00ff88;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(180deg, rgba(255,51,51,0.1) 0%, transparent 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,51,51,0.2);
+        }
+        
+        .header h1 {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        
+        .header span {
+            color: var(--primary);
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex: 1;
+        }
+        
+        .checkout-card {
+            background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+            border: 1px solid rgba(255,51,51,0.3);
+            border-radius: 12px;
+            padding: 30px;
+        }
+        
+        .product-info {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .product-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .product-price {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: var(--primary);
+        }
+        
+        .product-desc {
+            color: var(--gray);
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+        
+        input[type="email"],
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+            font-family: inherit;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        #card-container {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 14px;
+            min-height: 60px;
+        }
+        
+        #card-container iframe {
+            width: 100% !important;
+        }
+        
+        .pay-button {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .pay-button:hover {
+            background: #ff5555;
+        }
+        
+        .pay-button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        
+        .secure-badge {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+            font-size: 0.85em;
+        }
+        
+        .secure-badge::before {
+            content: '🔒';
+            margin-right: 5px;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        
+        .back-link a:hover {
+            color: white;
+        }
+        
+        .error-message {
+            background: rgba(255,51,51,0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-message {
+            background: rgba(0,255,136,0.1);
+            border: 1px solid var(--green);
+            color: var(--green);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 0.85em;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .checkout-card {
+                padding: 20px;
+            }
+            
+            .product-price {
+                font-size: 2em;
+            }
+        }
+    </style>
+    <!-- Square Web Payments SDK -->
+    <script src="https://web.squarecdn.com/v1/square.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Charlie Bot's <span>OpenClaw Guide</span></h1>
+    </div>
+    
+    <div class="container">
+        <div class="checkout-card">
+            <div class="product-info">
+                <div class="product-name" id="product-name">Loading...</div>
+                <div class="product-price" id="product-price">$0</div>
+                <div class="product-desc" id="product-desc">Loading...</div>
+            </div>
+            
+            <div class="error-message" id="error-message"></div>
+            <div class="success-message" id="success-message"></div>
+            
+            <form id="payment-form">
+                <div class="form-group">
+                    <label for="email">Email (for delivery)</label>
+                    <input type="email" id="email" name="email" placeholder="you@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Card Information</label>
+                    <div id="card-container">
+                        <div id="card-loading" style="color: var(--gray); font-size: 0.9em;">Loading secure payment form...</div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="pay-button" id="pay-button" disabled>
+                    Loading payment form...
+                </button>
+            </form>
+            
+            <div class="secure-badge">
+                Secure payment powered by Square
+            </div>
+        </div>
+        
+        <div class="back-link">
+            <a href="index.html">← Back to main page</a>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2026 Charlie Bot Industries. All sales final.</p>
+    </footer>
+    
+    <script>
+        // Product configuration
+        const PRODUCTS = {
+            quickstart: {
+                name: 'OpenClaw Quick Start Guide',
+                price: '$39',
+                priceCents: 3900,
+                description: 'Get up and running fast'
+            },
+            fullsystem: {
+                name: 'OpenClaw Full System',
+                price: '$97',
+                priceCents: 9700,
+                description: 'Everything including Quick Start content'
+            }
+        };
+        
+        // Get product from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const productKey = urlParams.get('product') || 'quickstart';
+        const product = PRODUCTS[productKey];
+        
+        if (!product) {
+            window.location.href = 'index.html';
+        }
+        
+        // Display product info
+        document.getElementById('product-name').textContent = product.name;
+        document.getElementById('product-price').textContent = product.price;
+        document.getElementById('product-desc').textContent = product.description;
+        document.getElementById('pay-button').textContent = `Pay ${product.price}`;
+        
+        // Initialize Square payments
+        const appId = 'sq0idp-uaH6xBBYIATp53gSXc2L-g';
+        const locationId = 'LQGDP9KSZ29V9';
+        
+        async function initializeCard(payments) {
+            console.log('Initializing card form...');
+            const card = await payments.card();
+            console.log('Card object created, attaching to container...');
+            await card.attach('#card-container');
+            console.log('Card form attached successfully');
+            return card;
+        }
+        
+        async function createPayment(token) {
+            const email = document.getElementById('email').value;
+            
+            // In production, this would call your backend
+            // For now, we'll simulate success and redirect
+            console.log('Payment token:', token);
+            console.log('Product:', productKey);
+            console.log('Email:', email);
+            
+            // Simulate processing
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({ success: true });
+                }, 1500);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', async function () {
+            if (!window.Square) {
+                document.getElementById('error-message').textContent = 
+                    'Payment system failed to load. Please refresh.';
+                document.getElementById('error-message').style.display = 'block';
+                return;
+            }
+            
+            let payments;
+            try {
+                payments = window.Square.payments(appId, locationId);
+            } catch (e) {
+                document.getElementById('error-message').textContent = 
+                    'Payment system error. Please try again.';
+                document.getElementById('error-message').style.display = 'block';
+                return;
+            }
+            
+            let card;
+            try {
+                card = await initializeCard(payments);
+                // Hide loading message once card form is loaded
+                const loadingMsg = document.getElementById('card-loading');
+                if (loadingMsg) loadingMsg.style.display = 'none';
+                // Enable pay button
+                const payButton = document.getElementById('pay-button');
+                payButton.disabled = false;
+                payButton.textContent = `Pay ${product.price}`;
+            } catch (e) {
+                console.error('Card initialization error:', e);
+                document.getElementById('error-message').textContent = 
+                    'Card form failed to load. Error: ' + e.message;
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('pay-button').disabled = true;
+                return;
+            }
+            
+            const form = document.getElementById('payment-form');
+            const payButton = document.getElementById('pay-button');
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+            
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                if (!email || !email.includes('@')) {
+                    errorMessage.textContent = 'Please enter a valid email address.';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+                
+                payButton.disabled = true;
+                payButton.textContent = 'Processing...';
+                errorMessage.style.display = 'none';
+                
+                try {
+                    const result = await card.tokenize();
+                    if (result.status === 'OK') {
+                        const paymentResult = await createPayment(result.token);
+                        
+                        if (paymentResult.success) {
+                            successMessage.textContent = 
+                                'Payment successful! Check your email for download link.';
+                            successMessage.style.display = 'block';
+                            form.style.display = 'none';
+                            
+                            // Redirect to success/download page after 3 seconds
+                            setTimeout(() => {
+                                window.location.href = `success.html?product=${productKey}&email=${encodeURIComponent(email)}`;
+                            }, 3000);
+                        } else {
+                            throw new Error('Payment failed');
+                        }
+                    } else {
+                        throw new Error(result.errors[0].message);
+                    }
+                } catch (error) {
+                    errorMessage.textContent = 
+                        error.message || 'Payment failed. Please try again.';
+                    errorMessage.style.display = 'block';
+                    payButton.disabled = false;
+                    payButton.textContent = `Pay ${product.price}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

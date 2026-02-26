@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Quick Start - Absolute Beginner's Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #fff;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            font-size: 16px;
+        }
+        
+        .cover {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: white;
+            margin: -40px -20px 60px;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .cover h1 {
+            font-size: 2.2em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+        
+        .cover h1 span {
+            color: #ff3333;
+        }
+        
+        .cover .subtitle {
+            font-size: 1.1em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+        
+        .cover .badge {
+            display: inline-block;
+            background: rgba(255,51,51,0.2);
+            border: 1px solid #ff3333;
+            color: #ff3333;
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        h2 {
+            font-size: 1.6em;
+            font-weight: 700;
+            margin: 50px 0 25px;
+            color: #0a0a0a;
+            border-bottom: 3px solid #ff3333;
+            padding-bottom: 12px;
+        }
+        
+        h3 {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin: 40px 0 18px;
+            color: #222;
+        }
+        
+        h4 {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 30px 0 15px;
+            color: #333;
+        }
+        
+        p {
+            margin-bottom: 20px;
+        }
+        
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin-bottom: 12px;
+        }
+        
+        .code-block {
+            background: #1a1a1a;
+            color: #00ff88;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 25px 0;
+            line-height: 1.6;
+        }
+        
+        .code-block .comment {
+            color: #666;
+        }
+        
+        .warning-box {
+            background: rgba(255,51,51,0.08);
+            border-left: 4px solid #ff3333;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .warning-box strong {
+            color: #ff3333;
+        }
+        
+        .tip-box {
+            background: rgba(0,255,136,0.08);
+            border-left: 4px solid #00ff88;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .tip-box strong {
+            color: #00aa55;
+        }
+        
+        .step-box {
+            background: #f8f8f8;
+            border: 2px solid #ddd;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #ff3333;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+        
+        .platform-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .platform-tab {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .platform-tab.active {
+            background: #ff3333;
+            color: white;
+            border-color: #ff3333;
+        }
+        
+        .section-divider {
+            text-align: center;
+            margin: 50px 0;
+            color: #ccc;
+            font-size: 1.2em;
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.95em;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #0a0a0a;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        strong {
+            color: #0a0a0a;
+            font-weight: 700;
+        }
+        
+        .highlight {
+            background: rgba(255,51,51,0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 15px;
+                font-size: 15px;
+            }
+            
+            .cover {
+                margin: -20px -15px 40px;
+                padding: 60px 15px;
+            }
+            
+            .cover h1 {
+                font-size: 1.7em;
+            }
+            
+            h2 {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cover">
+        <div class="badge">$39 QUICK START</div>
+        <h1>The <span>OpenClaw</span><br>Absolute Beginner's Guide</h1>
+        <p class="subtitle">From "What's a terminal?" to your first AI agent in 2 hours</p>
+        <p style="opacity: 0.6; margin-top: 30px; font-size: 0.9em;">No experience required. We'll explain everything.</p>
+    </div>
+
+    <h2>Before We Start: What You're Getting</h2>
+    
+    <p>This guide assumes you know <strong>nothing</strong> about programming, terminals, or AI. We'll explain every term, every step, and every click.</p>
+    
+    <p>By the end, you will:</p>
+    <ul>
+        <li>Understand what OpenClaw is (in plain English)</li>
+        <li>Know how to open and use a terminal</li>
+        <li>Have API keys from multiple AI providers</li>
+        <li>Have OpenClaw installed and configured</li>
+        <li>Have your first AI agent running</li>
+    </ul>
+
+    <div class="warning-box">
+        <strong>⚠️ IMPORTANT:</strong> This guide is long because it's detailed. Don't skip steps. If something doesn't work, re-read the section carefully. Every word matters.
+    </div>
+
+    <div class="section-divider">⚡ ⚡ ⚡</div>
+
+    <h2>Part 1: The Basics (What You Need to Know)</h2>
+
+    <h3>1.1 What is OpenClaw?</h3>
+    
+    <p><strong>Simple explanation:</strong> OpenClaw is software that lets you create "AI agents" — programs that can do tasks for you automatically using artificial intelligence.</p>
+    
+    <p><strong>Even simpler:</strong> You know how ChatGPT can write emails or answer questions? OpenClaw lets you create a version of ChatGPT that works on its own, 24/7, doing specific tasks you assign.</p>
+    
+    <p><strong>Example:</strong> You could create an agent that:</p>
+    <ul>
+        <li>Checks your email every hour</li>
+        <li>Drafts responses to simple questions</li>
+        <li>Sends you a summary of what it did</li>
+        <li>Never sleeps, never takes a break</li>
+    </ul>
+
+    <h3>1.2 What is a Terminal (And Why Do I Need It)?</h3>
+    
+    <p>A <strong>terminal</strong> (also called "command line" or "command prompt") is a way to control your computer by typing commands instead of clicking buttons.</p>
+    
+    <p><strong>Think of it like this:</strong> When you use your computer normally, you're using the "point and click" method. The terminal is the "type commands" method. Some software (like OpenClaw) is installed and run through the terminal.</p>
+
+    <div class="step-box">
+        <h4><span class="step-number">1</span> How to Open Terminal on Mac</h4>
+        
+        <p><strong>Method 1 (Easiest):</strong></p>
+        <ol>
+            <li>Press <kbd>Command</kbd> + <kbd>Space</kbd> on your keyboard (hold Command, press Space)</li>
+            <li>A search box appears at the center of your screen</li>
+            <li>Type: <code>terminal</code></li>
+            <li>Click the "Terminal" app that appears (black square icon)</li>
+        </ol>
+        
+        <p><strong>Method 2:</strong></p>
+        <ol>
+            <li>Open Finder (the blue smiling face in your dock)</li>
+            <li>Click "Applications" in the left sidebar</li>
+            <li>Scroll down and open the "Utilities" folder</li>
+            <li>Double-click "Terminal"</li>
+        </ol>
+        
+        <p><strong>What you should see:</strong> A black window with white text. At the top, it says something like <code>Last login:...</code> and at the bottom there's a line ending with a <code>$</code> symbol.</p>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span> How to Open Terminal on Windows</h4>
+        
+        <p><strong>Method 1 (Easiest):</strong></p>
+        <ol>
+            <li>Press the <kbd>Windows</kbd> key on your keyboard (or click the Start button)</li>
+            <li>Type: <code>cmd</code></li>
+            <li>Click "Command Prompt" or press Enter</li>
+        </ol>
+        
+        <p><strong>Method 2:</strong></p>
+        <ol>
+            <li>Right-click the Start button (Windows icon)</li>
+            <li>Click "Windows Terminal" or "Command Prompt"</li>
+        </ol>
+        
+        <p><strong>What you should see:</strong> A black window with white text showing something like <code>C:\Users\YourName&gt;</code></p>
+    </div>
+
+    <div class="tip-box">
+        <strong>💡 Pro Tip:</strong> Bookmark this! You'll be using the terminal a lot with OpenClaw. Consider dragging the Terminal/Command Prompt icon to your dock/taskbar for easy access.
+    </div>
+
+    <h3>1.3 What is an API Key (And Why Do I Need One)?</h3>
+    
+    <p>An <strong>API key</strong> is like a password that lets OpenClaw use AI services (like ChatGPT, Claude, or others).</p>
+    
+    <p><strong>Think of it like this:</strong> When you log into a website, you use a username and password. When OpenClaw wants to use an AI service, it uses an API key. It's proof that you're allowed to use the service.</p>
+    
+    <p><strong>Why you need multiple API keys:</strong></p>
+    <ul>
+        <li>Different AI companies offer different capabilities</li>
+        <li>Some are better at certain tasks than others</li>
+        <li>Some are cheaper than others</li>
+        <li>Having multiple options gives you flexibility</li>
+    </ul>
+
+    <div class="warning-box">
+        <strong>⚠️ SECURITY WARNING:</strong> API keys are like passwords. <strong>Never</strong> share them, <strong>never</strong> post them online, <strong>never</strong> email them to anyone. If someone gets your API key, they can use AI services and charge <em>your</em> account. We'll show you exactly how to keep them safe.
+    </div>
+
+    <div class="section-divider">⚡ ⚡ ⚡</div>
+
+    <h2>Part 2: Getting Your API Keys</h2>
+
+    <p>You need API keys from AI providers. We'll get them from the main ones. You don't need all of them to start, but having multiple gives you options.</p>
+
+    <h3>2.1 OpenAI (ChatGPT's Company)</h3>
+    
+    <p>OpenAI makes GPT-4 and GPT-3.5 (the technology behind ChatGPT). These are the most popular AI models.</p>
+
+    <div class="step-box">
+        <h4><span class="step-number">1</span> Create an OpenAI Account</h4>
+        
+        <ol>
+            <li>Go to: <code>platform.openai.com</code></li>
+            <li>Click "Sign up" (top right corner)</li>
+            <li>Enter your email address and create a password</li>
+            <li>Verify your email (check your inbox for a confirmation email)</li>
+            <li>Log in to your new account</li>
+        </ol>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span> Add Payment Method (Required)</h4>
+        
+        <p>OpenAI requires a payment method even if you plan to stay within free limits. They charge based on usage (we'll explain costs later).</p>
+        
+        <ol>
+            <li>Click your profile (top right) → "Billing"</li>
+            <li>Click "Add payment method"</li>
+            <li>Enter your credit card details</li>
+            <li>Set a usage limit (recommended: $20-50 to start)</li>
+        </ol>
+        
+        <div class="warning-box">
+            <strong>⚠️ IMPORTANT:</strong> Set a spending limit! Without one, accidental infinite loops could cost hundreds. We'll show you exactly how in Step 5.
+        </div>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">3</span> Create an API Key</h4>
+        
+        <ol>
+            <li>Go to: <code>platform.openai.com/api-keys</code></li>
+            <li>Click "Create new secret key"</li>
+            <li>Give it a name like "OpenClaw Setup"</li>
+            <li>Click "Create secret key"</li>
+            <li><strong>IMPORTANT:</strong> Copy the key immediately! It looks like: <code>sk-xxxxxxxxxxxxxxxxxxxxxxxx</code></li>
+            <li>Paste it somewhere safe (we'll tell you exactly where in Part 4)</li>
+            <li>Click "Done"</li>
+        </ol>
+        
+        <div class="warning-box">
+            <strong>⚠️ YOU CANNOT SEE THIS KEY AGAIN!</strong> Once you close the window, the key is hidden forever. If you lose it, you'll need to create a new one. Copy it now and save it securely.
+        </div>
+    </div>
+
+    <h3>2.2 Anthropic (Claude)</h3>
+    
+    <p>Anthropic makes Claude, an AI that's often better at reasoning and following complex instructions than ChatGPT.</p>
+
+    <div class="step-box">
+        <h4><span class="step-number">1</span> Create an Anthropic Account</h4>
+        
+        <ol>
+            <li>Go to: <code>console.anthropic.com</code></li>
+            <li>Click "Sign Up"</li>
+            <li>Enter your email and create a password</li>
+            <li>Verify your email</li>
+            <li>Complete the signup process (they may ask for phone verification)</li>
+        </ol>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span> Get API Key</h4>
+        
+        <ol>
+            <li>After logging in, go to "API Keys" in the left menu</li>
+            <li>Click "Create Key"</li>
+            <li>Name it "OpenClaw"</li>
+            <li>Copy the key (starts with <code>sk-ant-</code>)</li>
+            <li>Save it securely</li>
+        </ol>
+    </div>
+
+    <h3>2.3 OpenRouter (Use Multiple AIs Through One Service)</h3>
+    
+    <p>OpenRouter lets you access many different AI models (GPT-4, Claude, Llama, etc.) through one API key. It's convenient and often cheaper.</p>
+
+    <div class="step-box">
+        <h4><span class="step-number">1</span> Create Account</h4>
+        
+        <ol>
+            <li>Go to: <code>openrouter.ai</code></li>
+            <li>Click "Sign In" → "Sign Up"</li>
+            <li>Sign up with Google, GitHub, or email</li>
+            <li>Verify your email if required</li>
+        </ol>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span> Create API Key</h4>
+        
+        <ol>
+            <li>Click "Keys" in the top menu</li>
+            <li>Click "Create API Key"</li>
+            <li>Name it "OpenClaw"</li>
+            <li>Copy the key (long string of letters and numbers)</li>
+            <li>Save it securely</li>
+        </ol>
+    </div>
+
+    <h3>2.4 Google (Gemini)</h3>
+    
+    <p>Google's AI model. Good for certain tasks and often has a generous free tier.</p>
+
+    <div class="step-box">
+        <h4><span class="step-number">1</span> Get API Key</h4>
+        
+        <ol>
+            <li>Go to: <code>ai.google.dev</code></li>
+            <li>Click "Get API key in Google AI Studio"</li>
+            <li>Sign in with your Google account</li>
+            <li>Click "Create API Key"</li>
+            <li>Copy the key</li>
+            <li>Save it securely</li>
+        </ol>
+    </div>
+
+    <h3>2.5 Moonshot (Kimi)</h3>
+    
+    <p>A newer AI provider with competitive pricing and good performance for many tasks.</p>
+
+    <div class="step-box">
+        <h4><span class="step-number">1</span> Create Account</h4>
+        
+        <ol>
+            <li>Go to: <code>platform.moonshot.cn</code> (may redirect to English version)</li>
+            <li>Sign up with email</li>
+            <li>Verify your account</li>
+        </ol>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span> Get API Key</h4>
+        
+        <ol>
+            <li>Go to API section</li>
+            <li>Create new API key</li>
+            <li>Copy and save securely</li>
+        </ol>
+    </div>
+
+    <div class="section-divider">⚡ ⚡ ⚡</div>
+
+    <h2>Part 3: Installing Node.js</h2>
+    
+    <p>OpenClaw requires <strong>Node.js</strong> to run. Think of Node.js as the engine that OpenClaw runs on. You need to install it before you can install OpenClaw.</p>
+
+    <h3>3.1 Check If You Already Have Node.js</h3>
+
+    <div class="step-box">
+        <h4><span class="step-number">1</span> Open Your Terminal</h4>
+        
+        <p>Remember Part 1? Open your terminal now:</p>
+        <ul>
+            <li><strong>Mac:</strong> Press Cmd+Space, type "terminal", press Enter</li>
+            <li><strong>Windows:</strong> Press Windows key, type "cmd", press Enter</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span> Check Node Version</h4>
+        
+        <p>Type this command exactly (then press Enter):</p>
+        
+        <div class="code-block">
+node --version
+        </div>
+        
+        <p><strong>If you see something like:</strong> <code>v18.17.0</code> or higher → You have Node.js! Skip to Part 4.</p>
+        
+        <p><strong>If you see:</strong> "command not found" or an error → You need to install Node.js. Continue below.</p>
+    </div>
+
+    <h3>3.2 Install Node.js on Mac</h3>
+
+    <div class="step-box">
+        <h4><span class="step-number">1</span> Download the Installer</h4>
+        
+        <ol>
+            <li>Go to: <code>nodejs.org</code></li>
+            <li>Click the big green button that says "LTS" (Long Term Support)</li>
+            <li>Download the macOS Installer (.pkg file)</li>
+            <li>Wait for the download to complete (it's about 70MB)</li>
+        </ol>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span> Run the Installer</h4>
+        
+        <ol>
+            <li>Open your Downloads folder</li>
+            <li>Double-click the <code>node-v...</code> file you just downloaded</li>
+            <li>Click "Continue" on each screen</li>
+            <li>Click "Agree" to the license agreement</li>
+            <li>Click "Install" (you may need to enter your Mac password)</li>
+            <li>Wait for installation to complete</li>
+            <li>Click "Close"</li>
+        </ol>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">3</span> Verify Installation</h4>
+        
+        <ol>
+            <li>Open Terminal (Cmd+Space, type "terminal", Enter)</li>
+            <li>Type: <code>node --version</code></li>
+            <li>Press Enter</li>
+        </ol>
+        
+        <p>You should see a version number like <code>v20.10.0</code>. If you do, Node.js is installed!</p>
+    </div>
+
+    <h3>3.3 Install Node.js on Windows</h3>
+
+    <div class="step-box">
+        <h4><span class="step-number">1</span> Download the Installer</h4>
+        
+        <ol>
+            <li>Go to: <code>nodejs.org</code></li>
+            <li>Click the big green button that says "LTS"</li>
+            <li>Download the Windows Installer (.msi file)</li>
+            <li>Wait for download to complete</li>
+        </ol>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span> Run the Installer</h4>
+        
+        <ol>
+            <li>Open your Downloads folder</li>
+            <li>Double-click the <code>node-v...</code> file</li>
+            <li>Click "Next" on each screen</li>
+            <li>Accept the license agreement</li>
+            <li>Click "Install" (you may see a User Account Control prompt — click "Yes")</li>
+            <li>Wait for installation</li>
+            <li>Click "Finish"</li>
+        </ol>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">3</span> Verify Installation</h4>
+        
+        <ol>
+            <li>Open Command Prompt (Windows key, type "cmd", Enter)</li>
+            <li>Type: <code>node --version</code></li>
+            <li>Press Enter</li>
+        </ol>
+        
+        <p>You should see a version number. If you do, Node.js is installed!</p>
+    </div>
+
+    <div class="section-divider">⚡ ⚡ ⚡</div>
+
+    <p style="text-align: center; font-size: 1.2em; color: #666; margin-top: 40px;">
+        <strong>This is a preview.</strong><br>
+        Full guide continues with OpenClaw installation, configuration, and your first agent.<br>
+        Total length: ~40 pages of ultra-detailed instructions.
+    </p>
+
+</body>
+</html>
