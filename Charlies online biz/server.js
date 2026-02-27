@@ -7,12 +7,10 @@ const { createPayment, verifyPayment } = require('./square-integration');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('.'));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -100,7 +98,7 @@ app.get('/api/payment/:paymentId', async (req, res) => {
 });
 
 // PDF Download endpoint
-app.get('/download/:product', (req, res) => {
+app.get('/api/download/:product', (req, res) => {
   const { product } = req.params;
   const { email, payment } = req.query;
   
@@ -137,11 +135,15 @@ app.get('/download/:product', (req, res) => {
   console.log(`📥 Download: ${pdfFile} by ${email || 'unknown'}`);
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Charlie Bot's OpenClaw Guide server running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`💳 Payment endpoint: http://localhost:${PORT}/api/payment`);
-});
+// Only start server if not on Vercel (local development)
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`🚀 Charlie Bot's OpenClaw Guide server running on port ${PORT}`);
+    console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+    console.log(`💳 Payment endpoint: http://localhost:${PORT}/api/payment`);
+  });
+}
 
+// Export for Vercel
 module.exports = app;

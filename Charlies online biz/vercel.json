@@ -1,26 +1,16 @@
 {
   "version": 2,
   "name": "charlie-bot-openclaw-guide",
-  "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ],
   "env": {
     "SQUARE_ACCESS_TOKEN": "@square_access_token",
     "SQUARE_APPLICATION_ID": "@square_application_id",
     "SQUARE_LOCATION_ID": "@square_location_id",
-    "SQUARE_ENVIRONMENT": "@square_environment"
+    "SQUARE_ENVIRONMENT": "@square_environment",
+    "SQUARE_SANDBOX_APPLICATION_ID": "@square_sandbox_application_id",
+    "SQUARE_SANDBOX_LOCATION_ID": "@square_sandbox_location_id"
   }
 }
